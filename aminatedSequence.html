@@ -45,17 +45,21 @@
     };
 
     let lastExecution = Date.now();
-    const throttleDuration = 100;  
+    const throttleDuration = 100;
 
     window.addEventListener('scroll', () => {
       if (Date.now() - lastExecution > throttleDuration) {
         const scrollTop = html.scrollTop;
         const maxScrollTop = html.scrollHeight - window.innerHeight;
         const scrollFraction = scrollTop / maxScrollTop;
-        const frameIndex = Math.min(
+        let frameIndex = Math.min(
           frameCount - 1,
           Math.ceil(scrollFraction * frameCount)
         );
+
+        if (scrollFraction >= 0.99) {
+          frameIndex = frameCount - 1;
+        }
 
         requestAnimationFrame(() => {
           updateImage(frameIndex + 1);
