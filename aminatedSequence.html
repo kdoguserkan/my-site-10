@@ -1,103 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Animated Sequence</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;700&display=swap" rel="stylesheet">
-    <style>
-        html, body {
-            height: 200%;
-            margin: 0;
-            padding: 0;
-            background: #000;
-            font-family: 'Roboto', sans-serif;
-        }
-        #animatedImage {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            object-fit: cover;
-            object-position: center center;
-        }
-        #moonlightText {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 150px;
-            color: white;
-            font-family: 'Roboto', sans-serif;
-            opacity: 0; /* Başlangıçta yazıyı gizli tut */
-            transition: opacity 1s; /* 1 saniye süreyle fade-in efekti için */
-        }
-        #moon {
-            font-weight: 700; /* Roboto Bold için */
-        }
-        #light {
-            font-weight: 100; /* Roboto Thin için */
-        }
-        #tinyHomes {
-            font-weight: 300; /* Roboto Light için */
-            display: inline; /* TINY ve HOMES'u yan yana getir */
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Animated Sequence</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;700&display=swap');
+
+    html, body {
+      height: 200%;
+      margin: 0;
+      padding: 0;
+      background: #000;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    #animatedImage {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      object-position: center center;
+    }
+
+    #moonlightText {
+      position: fixed;
+      bottom: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 150px;
+      color: white;
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-family: 'Roboto', sans-serif;
+      text-align: center;
+      letter-spacing: -5px; /* Bu stil bilgisini ekledik */
+    }
+
+    #moon {
+      font-weight: 700;
+    }
+
+    #light {
+      font-weight: 100;
+    }
+
+    #tinyHomes {
+      font-weight: 300;
+    }
+
+  </style>
 </head>
 <body>
-    <img id="animatedImage" src="" alt="Animated Sequence">
-    <div id="moonlightText">
-        <span id="moon">MOON</span><span id="light">LIGHT</span> <span id="tinyHomes">TINY</span> <span id="tinyHomes">HOMES</span>
-    </div>
-    <script>
-        const html = document.documentElement;
-        const img = document.getElementById("animatedImage");
-        const text = document.getElementById("moonlightText");
+  <img id="animatedImage" src="" alt="Animated Sequence">
+  <div id="moonlightText">
+    <span id="moon">MOON</span><span id="light">LIGHT</span><br>
+    <span id="tinyHomes">TINY HOMES</span>
+  </div>
+  <script>
+    const html = document.documentElement;
+    const img = document.getElementById("animatedImage");
+    const moonlightText = document.getElementById("moonlightText");
 
-        const frameCount = 61;
-        const currentFrame = index => (`https://raw.githubusercontent.com/kdoguserkan/tinies/main/${(index * 2 - 1).toString().padStart(4, '0')}.png`);
+    const frameCount = 61;
+    const currentFrame = index => (`https://raw.githubusercontent.com/kdoguserkan/tinies/main/${(index * 2 - 1).toString().padStart(4, '0')}.png`);
 
-        const preloadImages = () => {
-            for (let i = 1; i <= frameCount; i++) {
-                const preloadedImg = new Image();
-                preloadedImg.src = currentFrame(i);
-            }
-        };
+    const preloadImages = () => {
+      for (let i = 1; i <= frameCount; i++) {
+        const preloadedImg = new Image();
+        preloadedImg.src = currentFrame(i);
+      }
+    };
 
-        const updateImage = index => {
-            img.src = currentFrame(index);
-        };
+    img.src = currentFrame(1);
 
-        img.src = currentFrame(1);
+    const updateImage = index => {
+      img.src = currentFrame(index);
+      if (index === frameCount) {
+        moonlightText.style.opacity = 1;
+      }
+    };
 
-        let lastExecution = Date.now();
-        const throttleDuration = 50;
+    let lastExecution = Date.now();
+    const throttleDuration = 50;  
 
-        window.addEventListener('scroll', () => {
-            if (Date.now() - lastExecution > throttleDuration) {
-                const scrollTop = html.scrollTop;
-                const maxScrollTop = html.scrollHeight - window.innerHeight;
-                const scrollFraction = scrollTop / maxScrollTop;
-                const frameIndex = Math.min(
-                    frameCount,
-                    Math.ceil(scrollFraction * frameCount)
-                );
+    window.addEventListener('scroll', () => {
+      if (Date.now() - lastExecution > throttleDuration) {
+        const scrollTop = html.scrollTop;
+        const maxScrollTop = html.scrollHeight - window.innerHeight;
+        const scrollFraction = scrollTop / maxScrollTop;
+        const frameIndex = Math.min(
+          frameCount - 1,
+          Math.ceil(scrollFraction * frameCount)
+        );
 
-                requestAnimationFrame(() => {
-                    updateImage(frameIndex);
-                    if (frameIndex === frameCount) {
-                        text.style.opacity = 1;
-                    } else {
-                        text.style.opacity = 0;
-                    }
-                });
-
-                lastExecution = Date.now();
-            }
+        requestAnimationFrame(() => {
+          updateImage(frameIndex + 1);
         });
 
-        preloadImages();
-    </script>
+        lastExecution = Date.now();
+      }
+    });
+
+    preloadImages();
+  </script>
 </body>
 </html>
