@@ -29,7 +29,14 @@
     const img = document.getElementById("animatedImage");
 
     const frameCount = 61;
-    const currentFrame = index => (`https://raw.githubusercontent.com/kdoguserkan/tinies/main/${(index * 2 - 1).toString().padStart(4, '0')}.png`);
+    
+    const currentFrame = index => {
+      let frameNumber = index * 2 - 1;
+      if (index === frameCount) {
+        frameNumber = 121;
+      }
+      return `https://raw.githubusercontent.com/kdoguserkan/tinies/main/${frameNumber.toString().padStart(4, '0')}.png`;
+    };
 
     const preloadImages = () => {
       for (let i = 1; i <= frameCount; i++) {
@@ -45,25 +52,19 @@
     };
 
     let lastExecution = Date.now();
-    const throttleDuration = 100;
+    const throttleDuration = 100;  
 
     window.addEventListener('scroll', () => {
       if (Date.now() - lastExecution > throttleDuration) {
         const scrollTop = html.scrollTop;
         const maxScrollTop = html.scrollHeight - window.innerHeight;
         const scrollFraction = scrollTop / maxScrollTop;
-        let frameIndex = Math.min(
+        const frameIndex = Math.min(
           frameCount - 1,
           Math.ceil(scrollFraction * frameCount)
         );
 
-        if (scrollFraction >= 0.99) {
-          frameIndex = frameCount - 1;
-        }
-
-        requestAnimationFrame(() => {
-          updateImage(frameIndex + 1);
-        });
+        requestAnimationFrame(() => updateImage(frameIndex + 1));
 
         lastExecution = Date.now();
       }
