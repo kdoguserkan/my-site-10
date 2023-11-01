@@ -36,7 +36,14 @@
       transition: opacity 0.3s;
       font-family: 'Roboto', sans-serif;
       text-align: center;
-      letter-spacing: -5px; /* Bu stil bilgisini ekledik */
+      letter-spacing: -5px;
+    }
+
+    /* Medya sorgusu: Ekran genişliği 768px'den küçükse bu stil bilgilerini uygula */
+    @media (max-width: 768px) {
+      #moonlightText {
+        font-size: 80px;
+      }
     }
 
     #moon {
