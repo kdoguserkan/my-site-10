@@ -1,117 +1,125 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Animated Sequence</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;700&display=swap');
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Sequence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;700&display=swap" rel="stylesheet">
+    <style>
+        html,
+        body {
+            height: 200%;
+            margin: 0;
+            padding: 0;
+            background: #000;
+        }
 
-    html, body {
-      height: 200%;
-      margin: 0;
-      padding: 0;
-      background: #000;
-      font-family: 'Roboto', sans-serif;
-    }
+        #animatedImage {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            object-position: center center;
+        }
 
-    #animatedImage {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      object-fit: cover;
-      object-position: center center;
-    }
+        .text-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.5s;
+            font-family: 'Roboto', sans-serif;
+            max-width: 90%; 
+            overflow: hidden;
+        }
 
-    #moonlightText {
-      position: fixed;
-      bottom: 10%;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 150px;
-      color: white;
-      opacity: 0;
-      transition: opacity 0.3s;
-      font-family: 'Roboto', sans-serif;
-      text-align: center;
-      letter-spacing: -5px;
-    }
+        .moon {
+            font-weight: 700;
+            font-size: 10vw;
+        }
 
-    /* Medya sorgusu: Ekran genişliği 768px'den küçükse bu stil bilgilerini uygula */
-    @media (max-width: 768px) {
-      #moonlightText {
-        font-size: 80px;
-      }
-    }
+        .light {
+            font-weight: 100;
+            font-size: 10vw;
+        }
 
-    #moon {
-      font-weight: 700;
-    }
+        .tiny-homes {
+            font-weight: 300;
+            font-size: 5vw;
+            display: inline-block;
+            white-space: nowrap;
+        }
 
-    #light {
-      font-weight: 100;
-    }
+        @media (max-width: 768px) {
+            .moon,
+            .light {
+                font-size: 20vw;
+            }
 
-    #tinyHomes {
-      font-weight: 300;
-    }
-
-  </style>
+            .tiny-homes {
+                font-size: 10vw;
+            }
+        }
+    </style>
 </head>
+
 <body>
-  <img id="animatedImage" src="" alt="Animated Sequence">
-  <div id="moonlightText">
-    <span id="moon">MOON</span><span id="light">LIGHT</span><br>
-    <span id="tinyHomes">TINY HOMES</span>
-  </div>
-  <script>
-    const html = document.documentElement;
-    const img = document.getElementById("animatedImage");
-    const moonlightText = document.getElementById("moonlightText");
+    <img id="animatedImage" src="" alt="Animated Sequence">
+    <div class="text-container">
+        <div>
+            <span class="moon" style="color: white;">MOON</span>
+            <span class="light" style="color: white;">LIGHT</span>
+        </div>
+        <div class="tiny-homes" style="color: white;">TINY HOMES</div>
+    </div>
 
-    const frameCount = 61;
-    const currentFrame = index => (`https://raw.githubusercontent.com/kdoguserkan/tinies/main/${(index * 2 - 1).toString().padStart(4, '0')}.png`);
+    <script>
+        const html = document.documentElement;
+        const img = document.getElementById("animatedImage");
+        const textContainer = document.querySelector('.text-container');
 
-    const preloadImages = () => {
-      for (let i = 1; i <= frameCount; i++) {
-        const preloadedImg = new Image();
-        preloadedImg.src = currentFrame(i);
-      }
-    };
+        const frameCount = 61;
+        const currentFrame = index => (`https://raw.githubusercontent.com/kdoguserkan/tinies/main/${(index * 2 - 1).toString().padStart(4, '0')}.png`);
 
-    img.src = currentFrame(1);
+        const preloadImages = () => {
+            for (let i = 1; i <= frameCount; i++) {
+                const preloadedImg = new Image();
+                preloadedImg.src = currentFrame(i);
+            }
+        };
 
-    const updateImage = index => {
-      img.src = currentFrame(index);
-      if (index === frameCount) {
-        moonlightText.style.opacity = 1;
-      }
-    };
+        img.src = currentFrame(1);
 
-    let lastExecution = Date.now();
-    const throttleDuration = 50;  
+        const updateImage = index => {
+            img.src = currentFrame(index);
+            if (index === frameCount) {
+                textContainer.style.opacity = 1;
+            } else {
+                textContainer.style.opacity = 0;
+            }
+        };
 
-    window.addEventListener('scroll', () => {
-      if (Date.now() - lastExecution > throttleDuration) {
-        const scrollTop = html.scrollTop;
-        const maxScrollTop = html.scrollHeight - window.innerHeight;
-        const scrollFraction = scrollTop / maxScrollTop;
-        const frameIndex = Math.min(
-          frameCount - 1,
-          Math.ceil(scrollFraction * frameCount)
-        );
+        window.addEventListener('scroll', () => {
+            const scrollTop = html.scrollTop;
+            const maxScrollTop = html.scrollHeight - window.innerHeight;
+            const scrollFraction = scrollTop / maxScrollTop;
+            const frameIndex = Math.min(
+                frameCount - 1,
+                Math.ceil(scrollFraction * frameCount)
+            );
 
-        requestAnimationFrame(() => {
-          updateImage(frameIndex + 1);
+            requestAnimationFrame(() => {
+                updateImage(frameIndex + 1);
+            });
         });
 
-        lastExecution = Date.now();
-      }
-    });
-
-    preloadImages();
-  </script>
+        preloadImages();
+    </script>
 </body>
+
 </html>
