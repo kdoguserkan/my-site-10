@@ -28,11 +28,11 @@
     const html = document.documentElement;
     const img = document.getElementById("animatedImage");
 
-    const frameCount = 61;
-    const currentFrame = index => (`https://raw.githubusercontent.com/kdoguserkan/tinies/main/${(index * 2 - 1).toString().padStart(4, '0')}.png`);
+    const frameCount = 121; 
+    const currentFrame = index => (`https://raw.githubusercontent.com/kdoguserkan/tinies/main/${(index).toString().padStart(4, '0')}.png`);
 
     const preloadImages = () => {
-      for (let i = 1; i <= frameCount; i++) {
+      for (let i = 1; i <= frameCount; i += 2) { 
         const preloadedImg = new Image();
         preloadedImg.src = currentFrame(i);
       }
@@ -40,7 +40,7 @@
 
     const preloadNearbyImages = (currentIndex) => {
       const preloadRange = 3;  
-      for (let i = currentIndex + 1; i <= Math.min(currentIndex + preloadRange, frameCount); i++) {
+      for (let i = currentIndex + 2; i <= Math.min(currentIndex + 2 * preloadRange, frameCount); i += 2) { 
         const img = new Image();
         img.src = currentFrame(i);
       }
@@ -49,7 +49,7 @@
     img.src = currentFrame(1);
 
     const updateImage = index => {
-      img.src = currentFrame(index);
+      img.src = currentFrame(index * 2 - 1); 
     };
 
     let lastExecution = Date.now();
@@ -62,11 +62,11 @@
         const scrollFraction = scrollTop / maxScrollTop;
         const frameIndex = Math.min(
           frameCount - 1,
-          Math.ceil(scrollFraction * frameCount)
+          Math.ceil(scrollFraction * frameCount / 2) 
         );
 
         requestAnimationFrame(() => {
-          updateImage(frameIndex + 1);
+          updateImage(frameIndex + 1); 
           preloadNearbyImages(frameIndex);  
         });
 
