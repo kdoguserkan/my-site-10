@@ -27,7 +27,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-size: 150px; /* Font büyüklüğünü yarıya düşürdüm */
+            font-size: 150px;
             color: white;
             font-family: 'Roboto', sans-serif;
             opacity: 0; /* Başlangıçta yazıyı gizli tut */
@@ -41,13 +41,14 @@
         }
         #tinyHomes {
             font-weight: 300; /* Roboto Light için */
+            display: block; /* Bu satır, TINY ve HOMES'u alt alta getirir */
         }
     </style>
 </head>
 <body>
     <img id="animatedImage" src="" alt="Animated Sequence">
     <div id="moonlightText">
-        <span id="moon">MOON</span><span id="light">LIGHT</span> <span id="tinyHomes">TINY HOMES</span>
+        <span id="moon">MOON</span><span id="light">LIGHT</span> <br><span id="tinyHomes">TINY</span><span id="homes">HOMES</span>
     </div>
     <script>
         const html = document.documentElement;
