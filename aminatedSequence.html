@@ -11,6 +11,7 @@
             margin: 0;
             padding: 0;
             background: #000;
+            font-family: 'Roboto', sans-serif;
         }
         #animatedImage {
             position: fixed;
@@ -20,79 +21,50 @@
             height: 100vh;
             object-fit: cover;
             object-position: center center;
-            will-change: transform;
+            z-index: 1;
         }
-        .moonlightText {
+        #overlayText {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            font-family: 'Roboto', sans-serif;
-            display: none;
-            animation: fadeIn 2s ease-in-out forwards;
+            z-index: 2;
+            opacity: 0;
+            transition: opacity 1s ease;
+            font-size: 3em;
+            color: white;
         }
-        .moonlightText .moon {
+        #overlayText .moon {
             font-weight: 700;
         }
-        .moonlightText .light {
+        #overlayText .light {
             font-weight: 100;
         }
-        .moonlightText .tiny-homes {
+        #overlayText .tiny-homes {
             font-weight: 300;
-            display: block;
-        }
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
         }
     </style>
 </head>
 <body>
 <img id="animatedImage" src="" alt="Animated Sequence">
-<div class="moonlightText">
-    <span class="moon">MOON</span><span class="light">LIGHT</span>
-    <span class="tiny-homes">TINY HOMES</span>
+<div id="overlayText">
+    <span class="moon">MOON</span>
+    <span class="light">LIGHT</span>
+    <div class="tiny-homes">TINY HOMES</div>
 </div>
 <script>
     const html = document.documentElement;
     const img = document.getElementById("animatedImage");
-    const textDiv = document.querySelector(".moonlightText");
+    const text = document.getElementById("overlayText");
 
     const frameCount = 61;
     const currentFrame = index => (`https://raw.githubusercontent.com/kdoguserkan/tinies/main/${(index * 2 - 1).toString().padStart(4, '0')}.png`);
 
     const updateImage = index => {
         img.src = currentFrame(index);
-        if (index === frameCount) {
-            textDiv.style.display = "block";
-        } else {
-            textDiv.style.display = "none";
-        }
     };
 
-    let lastScrollY = 0;
-    const debounce = (func, wait = 10, immediate = true) => {
-        let timeout;
-        return function() {
-            const context = this, args = arguments;
-            const later = function() {
-                timeout = null;
-                if (!immediate) func.apply(context, args);
-            };
-            const callNow = immediate && !timeout;
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-            if (callNow) func.apply(context, args);
-        };
-    };
-
-    window.addEventListener('scroll', debounce(() => {
-        if(Math.abs(window.scrollY - lastScrollY) < 5) return;
-        lastScrollY = window.scrollY;
+    window.addEventListener('scroll', () => {
         const scrollTop = html.scrollTop;
         const maxScrollTop = html.scrollHeight - window.innerHeight;
         const scrollFraction = scrollTop / maxScrollTop;
@@ -100,12 +72,16 @@
             frameCount,
             Math.ceil(scrollFraction * frameCount)
         );
-        requestAnimationFrame(() => {
-            updateImage(frameIndex);
-        });
-    }, 50));
 
-    updateImage(1);
+        if(frameIndex === frameCount) {
+            text.style.opacity = '1';
+        } else {
+            text.style.opacity = '0';
+        }
+
+        requestAnimationFrame(() => updateImage(frameIndex));
+    });
+
 </script>
 </body>
 </html>
