@@ -21,67 +21,82 @@
             height: 100vh;
             object-fit: cover;
             object-position: center center;
-            z-index: 1;
         }
-        #overlayText {
+        #moonlightText {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            z-index: 2;
-            opacity: 0;
-            transition: opacity 1s ease;
-            font-size: 500px; 
-            color: white; 
+            font-size: 300px;
+            color: white;
+            font-family: 'Roboto', sans-serif;
+            opacity: 0; /* Başlangıçta yazıyı gizli tut */
+            transition: opacity 1s; /* 1 saniye süreyle fade-in efekti için */
         }
-        #overlayText .moon {
-            font-weight: 700;
+        #moon {
+            font-weight: 700; /* Roboto Bold için */
         }
-        #overlayText .light {
-            font-weight: 100;
+        #light {
+            font-weight: 100; /* Roboto Thin için */
         }
-        #overlayText .tiny-homes {
-            font-weight: 300;
+        #tinyHomes {
+            font-weight: 300; /* Roboto Light için */
         }
     </style>
 </head>
 <body>
-<img id="animatedImage" src="" alt="Animated Sequence">
-<div id="overlayText">
-    <span class="moon">MOON</span>
-    <span class="light">LIGHT</span>
-    <div class="tiny-homes">TINY HOMES</div>
-</div>
-<script>
-    const html = document.documentElement;
-    const img = document.getElementById("animatedImage");
-    const text = document.getElementById("overlayText");
+    <img id="animatedImage" src="" alt="Animated Sequence">
+    <div id="moonlightText">
+        <span id="moon">MOON</span><span id="light">LIGHT</span> <span id="tinyHomes">TINY HOMES</span>
+    </div>
+    <script>
+        const html = document.documentElement;
+        const img = document.getElementById("animatedImage");
+        const text = document.getElementById("moonlightText");
 
-    const frameCount = 61;
-    const currentFrame = index => (`https://raw.githubusercontent.com/kdoguserkan/tinies/main/${(index * 2 - 1).toString().padStart(4, '0')}.png`);
+        const frameCount = 61;
+        const currentFrame = index => (`https://raw.githubusercontent.com/kdoguserkan/tinies/main/${(index * 2 - 1).toString().padStart(4, '0')}.png`);
 
-    const updateImage = index => {
-        img.src = currentFrame(index);
-    };
+        const preloadImages = () => {
+            for (let i = 1; i <= frameCount; i++) {
+                const preloadedImg = new Image();
+                preloadedImg.src = currentFrame(i);
+            }
+        };
 
-    window.addEventListener('scroll', () => {
-        const scrollTop = html.scrollTop;
-        const maxScrollTop = html.scrollHeight - window.innerHeight;
-        const scrollFraction = scrollTop / maxScrollTop;
-        const frameIndex = Math.min(
-            frameCount,
-            Math.ceil(scrollFraction * frameCount)
-        );
+        const updateImage = index => {
+            img.src = currentFrame(index);
+        };
 
-        if(frameIndex === frameCount) {
-            text.style.opacity = '1';
-        } else {
-            text.style.opacity = '0';
-        }
+        img.src = currentFrame(1);
 
-        requestAnimationFrame(() => updateImage(frameIndex));
-    });
+        let lastExecution = Date.now();
+        const throttleDuration = 50;
 
-</script>
+        window.addEventListener('scroll', () => {
+            if (Date.now() - lastExecution > throttleDuration) {
+                const scrollTop = html.scrollTop;
+                const maxScrollTop = html.scrollHeight - window.innerHeight;
+                const scrollFraction = scrollTop / maxScrollTop;
+                const frameIndex = Math.min(
+                    frameCount,
+                    Math.ceil(scrollFraction * frameCount)
+                );
+
+                requestAnimationFrame(() => {
+                    updateImage(frameIndex);
+                    if (frameIndex === frameCount) {
+                        text.style.opacity = 1;
+                    } else {
+                        text.style.opacity = 0;
+                    }
+                });
+
+                lastExecution = Date.now();
+            }
+        });
+
+        preloadImages();
+    </script>
 </body>
 </html>
