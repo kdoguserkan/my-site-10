@@ -19,6 +19,7 @@
             height: 100vh;
             object-fit: cover;
             object-position: center center;
+            will-change: transform;
         }
     </style>
 </head>
@@ -35,19 +36,25 @@
         img.src = currentFrame(index);
     };
 
-    const throttle = (callback, limit) => {
-        let lastCall = 0;
-        return function () {
-            const now = Date.now();
-            if (now - lastCall < limit) {
-                return;
-            }
-            lastCall = now;
-            callback.apply(null, arguments);
+    let lastScrollY = 0;
+    const debounce = (func, wait = 10, immediate = true) => {
+        let timeout;
+        return function() {
+            const context = this, args = arguments;
+            const later = function() {
+                timeout = null;
+                if (!immediate) func.apply(context, args);
+            };
+            const callNow = immediate && !timeout;
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+            if (callNow) func.apply(context, args);
         };
     };
 
-    window.addEventListener('scroll', throttle(() => {
+    window.addEventListener('scroll', debounce(() => {
+        if(Math.abs(window.scrollY - lastScrollY) < 5) return;
+        lastScrollY = window.scrollY;
         const scrollTop = html.scrollTop;
         const maxScrollTop = html.scrollHeight - window.innerHeight;
         const scrollFraction = scrollTop / maxScrollTop;
@@ -58,9 +65,9 @@
         requestAnimationFrame(() => {
             updateImage(frameIndex);
         });
-    }, 100));
+    }, 50));
 
-    updateImage(1);  // Başlangıç resmi olarak 1. frame'i yükler
+    updateImage(1);
 </script>
 </body>
 </html>
