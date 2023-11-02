@@ -1,104 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scroll Animation</title>
+    <title>Animated Sequence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;700&display=swap" rel="stylesheet">
     <style>
+        html,
         body {
+            height: 200%;
             margin: 0;
-            font-family: 'Roboto', sans-serif;
-            height: 300vh;
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            background-position: center;
-            overflow-x: hidden;
-            transition: background-image 0.25s ease-in;
+            padding: 0;
+            background: #000;
         }
 
-        #text {
-            font-size: 150px;
+        #animatedImage {
             position: fixed;
-            bottom: 10%;
-            left: 10%;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            object-position: center center;
+        }
+
+        .text-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
             opacity: 0;
-            transition: opacity 1s ease-in-out;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            transition: opacity 0.5s;
+            font-family: 'Roboto', sans-serif;
+            max-width: 90%;
+            overflow: hidden;
         }
 
-        #text .moon {
-            font-weight: bold;
+        .moon {
+            font-weight: 700;
+            font-size: 10vw;
         }
 
-        #text .light {
+        .light {
             font-weight: 100;
+            font-size: 10vw;
         }
 
-        #text .tiny-homes {
-            display: flex;
-            gap: 10px;
+        .tiny-homes {
             font-weight: 300;
+            font-size: 5vw;
+            display: inline-block;
+            white-space: nowrap;
         }
 
-        @media only screen and (max-width: 600px) {
-            #text {
-                font-size: 40px;
-                bottom: 5%;
-                left: 5%;
+        @media (max-width: 768px) {
+            .moon,
+            .light {
+                font-size: 20vw;
+                display: inline;
             }
 
-            #text .tiny-homes {
-                flex-direction: row;
+            .tiny-homes {
+                font-size: 10vw;
             }
         }
     </style>
 </head>
+
 <body>
-    <div id="text">
-        <span class="moon">MOON</span>
-        <span class="light">LIGHT</span>
-        <div class="tiny-homes">
-            <span>TINY</span>
-            <span>HOMES</span>
+    <img id="animatedImage" src="" alt="Animated Sequence">
+    <div class="text-container">
+        <div>
+            <span class="moon" style="color: white;">MOON</span>
+            <span class="light" style="color: white;">LIGHT</span>
         </div>
+        <div class="tiny-homes" style="color: white;">TINY HOMES</div>
     </div>
 
     <script>
+        const html = document.documentElement;
+        const img = document.getElementById("animatedImage");
+        const textContainer = document.querySelector('.text-container');
+
         const frameCount = 61;
-        const frameRate = 1000 / 60;
+        const currentFrame = index => (`https://raw.githubusercontent.com/kdoguserkan/tinies/main/${(index * 2 - 1).toString().padStart(4, '0')}.webp`);
 
-        let frame = 1;
-        const body = document.body;
-
-        function currentFrame(frame) {
-            return `url('./frames/000${String(frame).padStart(2, '0')}.webp')`;
-        }
-
-        function animateScroll() {
-            body.style.backgroundImage = currentFrame(frame);
-            if (frame < frameCount) {
-                frame += 2;
-                requestAnimationFrame(animateScroll);
-            } else {
-                body.style.background = `#000 url('./frames/0121.webp') center/cover no-repeat fixed`;
-                document.getElementById('text').style.opacity = '1';
+        const preloadImages = () => {
+            for (let i = 1; i <= frameCount; i++) {
+                const preloadedImg = new Image();
+                preloadedImg.src = currentFrame(i);
             }
-        }
+        };
+
+        img.src = currentFrame(1);
+
+        const updateImage = index => {
+            img.src = currentFrame(index);
+            if (index === frameCount) {
+                textContainer.style.opacity = 1;
+            } else {
+                textContainer.style.opacity = 0;
+            }
+        };
 
         window.addEventListener('scroll', () => {
-            const scrollY = window.scrollY || window.pageYOffset;
-            const percentage = scrollY / (document.documentElement.scrollHeight - window.innerHeight);
-            frame = Math.min(frameCount, Math.ceil(percentage * frameCount));
-            body.style.backgroundImage = currentFrame(frame);
+            const scrollTop = html.scrollTop;
+            const maxScrollTop = html.scrollHeight - window.innerHeight;
+            const scrollFraction = scrollTop / maxScrollTop;
+            const frameIndex = Math.min(
+                frameCount - 1,
+                Math.ceil(scrollFraction * frameCount)
+            );
+
+            requestAnimationFrame(() => {
+                updateImage(frameIndex + 1);
+            });
         });
 
-        // Initialize with the first frame
-        body.style.backgroundImage = currentFrame(1);
+        preloadImages();
     </script>
 </body>
+
 </html>
