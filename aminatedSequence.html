@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Animated Sequence</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;700&display=swap" rel="stylesheet">
     <style>
         html,
         body {
@@ -25,45 +24,34 @@
             object-position: center center;
         }
 
-        .text-container {
+        #moonlightText {
             position: fixed;
-            top: 50%;
+            bottom: 10%;
             left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            opacity: 0;
-            transition: opacity 0.5s;
+            transform: translateX(-50%);
             font-family: 'Roboto', sans-serif;
-            max-width: 90%;
-            overflow: hidden;
-        }
-
-        .moon {
-            font-weight: 700;
-            font-size: 10vw;
-        }
-
-        .light {
-            font-weight: 100;
-            font-size: 10vw;
-        }
-
-        .tiny-homes {
-            font-weight: 300;
-            font-size: 5vw;
-            display: inline-block;
+            font-size: 300px;
+            opacity: 0;
+            transition: opacity 1s;
             white-space: nowrap;
         }
 
-        @media (max-width: 768px) {
-            .moon,
-            .light {
-                font-size: 20vw;
-                display: inline;
-            }
+        #moon {
+            font-weight: bold;
+        }
 
-            .tiny-homes {
-                font-size: 10vw;
+        #light {
+            font-weight: 100;
+        }
+
+        #tinyhomes {
+            display: block;
+            font-weight: 300;
+        }
+
+        @media only screen and (max-width: 768px) {
+            #moonlightText {
+                font-size: 100px;
             }
         }
     </style>
@@ -71,21 +59,18 @@
 
 <body>
     <img id="animatedImage" src="" alt="Animated Sequence">
-    <div class="text-container">
-        <div>
-            <span class="moon" style="color: white;">MOON</span>
-            <span class="light" style="color: white;">LIGHT</span>
-        </div>
-        <div class="tiny-homes" style="color: white;">TINY HOMES</div>
+    <div id="moonlightText">
+        <span id="moon">MOON</span><span id="light">LIGHT</span>
+        <span id="tinyhomes">TINY HOMES</span>
     </div>
 
     <script>
         const html = document.documentElement;
         const img = document.getElementById("animatedImage");
-        const textContainer = document.querySelector('.text-container');
+        const text = document.getElementById("moonlightText");
 
         const frameCount = 61;
-        const currentFrame = index => (`https://raw.githubusercontent.com/kdoguserkan/tinies/main/${(index * 2 - 1).toString().padStart(4, '0')}.png`);
+        const currentFrame = index => (`https://raw.githubusercontent.com/kdoguserkan/tinies/main/${(index * 2 - 1).toString().padStart(4, '0')}.webp`);
 
         const preloadImages = () => {
             for (let i = 1; i <= frameCount; i++) {
@@ -99,24 +84,29 @@
         const updateImage = index => {
             img.src = currentFrame(index);
             if (index === frameCount) {
-                textContainer.style.opacity = 1;
-            } else {
-                textContainer.style.opacity = 0;
+                text.style.opacity = "1";
             }
         };
 
-        window.addEventListener('scroll', () => {
-            const scrollTop = html.scrollTop;
-            const maxScrollTop = html.scrollHeight - window.innerHeight;
-            const scrollFraction = scrollTop / maxScrollTop;
-            const frameIndex = Math.min(
-                frameCount - 1,
-                Math.ceil(scrollFraction * frameCount)
-            );
+        let lastExecution = Date.now();
+        const throttleDuration = 100;
 
-            requestAnimationFrame(() => {
-                updateImage(frameIndex + 1);
-            });
+        window.addEventListener('scroll', () => {
+            if (Date.now() - lastExecution > throttleDuration) {
+                const scrollTop = html.scrollTop;
+                const maxScrollTop = html.scrollHeight - window.innerHeight;
+                const scrollFraction = scrollTop / maxScrollTop;
+                const frameIndex = Math.min(
+                    frameCount - 1,
+                    Math.ceil(scrollFraction * frameCount)
+                );
+
+                requestAnimationFrame(() => {
+                    updateImage(frameIndex + 1);
+                });
+
+                lastExecution = Date.now();
+            }
         });
 
         preloadImages();
