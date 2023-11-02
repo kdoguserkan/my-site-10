@@ -36,21 +36,22 @@
             font-family: 'Roboto', sans-serif;
             max-width: 90%;
             overflow: hidden;
+            color: white; /* Yazı renkleri beyaz olarak ayarlandı */
         }
 
         .moon {
             font-weight: 700;
-            font-size: 10vw;
+            font-size: 7.5vw; /* 3/4 oranında puntosu düşürüldü */
         }
 
         .light {
             font-weight: 100;
-            font-size: 10vw;
+            font-size: 7.5vw; /* 3/4 oranında puntosu düşürüldü */
         }
 
         .tiny-homes {
             font-weight: 300;
-            font-size: 5vw;
+            font-size: 3.75vw; /* 3/4 oranında puntosu düşürüldü */
             display: inline-block;
             white-space: nowrap;
         }
@@ -58,12 +59,12 @@
         @media (max-width: 768px) {
             .moon,
             .light {
-                font-size: 20vw;
+                font-size: 15vw; /* 3/4 oranında puntosu düşürüldü */
                 display: inline;
             }
 
             .tiny-homes {
-                font-size: 10vw;
+                font-size: 7.5vw; /* 3/4 oranında puntosu düşürüldü */
             }
         }
     </style>
@@ -73,10 +74,10 @@
     <img id="animatedImage" src="" alt="Animated Sequence">
     <div class="text-container">
         <div>
-            <span class="moon" style="color: white;">MOON</span>
-            <span class="light" style="color: white;">LIGHT</span>
+            <span class="moon">MOON</span>
+            <span class="light">LIGHT</span>
         </div>
-        <div class="tiny-homes" style="color: white;">TINY HOMES</div>
+        <div class="tiny-homes">TINY HOMES</div>
     </div>
 
     <script>
@@ -101,7 +102,7 @@
             if (index === frameCount) {
                 textContainer.style.opacity = 1;
             } else {
-                textContainer.style.opacity = 0;
+                textContainer.style.opacity = 0; /* Scroll up yapınca yazının kaybolmasını sağlamak için */
             }
         };
 
