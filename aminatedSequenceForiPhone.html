@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animated Sequence for iPhone</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;700&display=swap" rel="stylesheet">
+    <style>
+        /* Style içeriğinizi buraya yerleştirin */
+    </style>
+</head>
+<body>
+    <img id="animatedImage" src="" alt="Animated Sequence">
+    <div class="text-container">
+        <!-- Text içeriğiniz burada -->
+    </div>
+
+    <script>
+        const html = document.documentElement;
+        const img = document.getElementById("animatedImage");
+        const textContainer = document.querySelector('.text-container');
+
+        const frameCount = 61;
+        // main2 branch'ını referans alan görsel yolu
+        const currentFrame = index => (
+          `https://raw.githubusercontent.com/kdoguserkan/tinies/main2/${(index * 2 - 1).toString().padStart(4, '0')}.webp`
+        );
+
+        // Önceden yüklenen görselleri ve görsel güncelleme fonksiyonunu buraya ekleyin
+        // ...
+
+        window.addEventListener('scroll', () => {
+            // Scroll event handler ve diğer fonksiyonları buraya ekleyin
+            // ...
+        });
+
+        preloadImages();
+    </script>
+</body>
+</html>
