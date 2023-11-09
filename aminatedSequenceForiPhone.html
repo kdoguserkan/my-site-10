@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,34 +8,128 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;700&display=swap" rel="stylesheet">
     <style>
         /* Style içeriğinizi buraya yerleştirin */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: #000;
+            overflow: hidden; /* Eğer scroll olmasını istemiyorsanız */
+        }
+
+        #animatedImage {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            object-position: center center;
+        }
+
+        .text-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white; /* Tüm yazıların rengini beyaz yapar */
+            font-family: 'Roboto', sans-serif;
+            max-width: 90%;
+            overflow: hidden;
+        }
+
+        .moon, .light, .tiny-homes {
+            transition: opacity 0.5s ease-out;
+            opacity: 0; /* Başlangıçta yazı görünmez */
+        }
+
+        .moon {
+            font-weight: 700;
+            font-size: 5vw;
+        }
+
+        .light {
+            font-weight: 100;
+            font-size: 5vw;
+        }
+
+        .tiny-homes {
+            font-weight: 300;
+            font-size: 2.5vw;
+            display: inline-block;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 768px) {
+            .moon, .light {
+                font-size: 20vw;
+            }
+
+            .tiny-homes {
+                font-size: 10vw;
+            }
+        }
     </style>
 </head>
+
 <body>
     <img id="animatedImage" src="" alt="Animated Sequence">
     <div class="text-container">
         <!-- Text içeriğiniz burada -->
+        <div>
+            <span class="moon">MOON</span>
+            <span class="light">LIGHT</span>
+        </div>
+        <div class="tiny-homes">TINY HOMES</div>
     </div>
 
     <script>
         const html = document.documentElement;
         const img = document.getElementById("animatedImage");
         const textContainer = document.querySelector('.text-container');
+        const moonText = document.querySelector('.moon');
+        const lightText = document.querySelector('.light');
+        const tinyHomesText = document.querySelector('.tiny-homes');
 
         const frameCount = 61;
         // main2 branch'ını referans alan görsel yolu
         const currentFrame = index => (
-          `https://raw.githubusercontent.com/kdoguserkan/tinies/main2/${(index * 2 - 1).toString().padStart(4, '0')}.webp`
+            `https://raw.githubusercontent.com/kdoguserkan/tinies/main2/${(index * 2 - 1).toString().padStart(4, '0')}.webp`
         );
 
         // Önceden yüklenen görselleri ve görsel güncelleme fonksiyonunu buraya ekleyin
-        // ...
-
-        window.addEventListener('scroll', () => {
-            // Scroll event handler ve diğer fonksiyonları buraya ekleyin
-            // ...
-        });
+        const preloadImages = () => {
+            for (let i = 1; i <= frameCount; i++) {
+                const img = new Image();
+                img.src = currentFrame(i);
+            }
+        };
 
         preloadImages();
+
+        const updateImage = index => {
+            img.src = currentFrame(index);
+            if (index === frameCount) {
+                moonText.style.opacity = 1;
+                lightText.style.opacity = 1;
+                tinyHomesText.style.opacity = 1;
+            }
+        };
+
+        // Scroll event handler ve diğer fonksiyonları buraya ekleyin
+        window.addEventListener('scroll', () => {
+            const scrollTop = html.scrollTop;
+            const maxScrollTop = html.scrollHeight - window.innerHeight;
+            const scrollFraction = scrollTop / maxScrollTop;
+            const frameIndex = Math.min(
+                frameCount - 1,
+                Math.floor(scrollFraction * frameCount)
+            );
+
+            requestAnimationFrame(() => updateImage(frameIndex + 1));
+        });
+
     </script>
 </body>
+
 </html>
