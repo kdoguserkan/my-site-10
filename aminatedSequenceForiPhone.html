@@ -30,7 +30,7 @@
             transform: translate(-50%, -50%);
             text-align: center;
             opacity: 0;
-            transition: opacity 0.5s;
+            transition: opacity 0.5s ease-in-out;
             font-family: 'Roboto', sans-serif;
             max-width: 90%;
             overflow: hidden;
@@ -57,7 +57,6 @@
         @media (max-width: 768px) {
             .moon, .light {
                 font-size: 15vw;
-                display: inline;
             }
 
             .tiny-homes {
@@ -77,44 +76,48 @@
     </div>
 
     <script>
-        const html = document.documentElement;
         const frameCount = 61;
         const currentFrame = index => (
             `https://raw.githubusercontent.com/kdoguserkan/tinies/main/${(10001 + (index - 1) * 2).toString().padStart(5, '0')}.webp`
         );
 
-        const preloadImages = () => {
-            for (let i = 1; i <= frameCount; i++) {
-                const img = new Image();
-                img.src = currentFrame(i);
-                img.onload = () => {
-                    if (i === 1) {
-                        document.getElementById("animatedImage").src = img.src;
-                    }
-                };
-            }
-        };
-
-        const updateImage = index => {
+        window.addEventListener('load', () => {
             const img = document.getElementById("animatedImage");
-            img.src = currentFrame(index);
             const textContainer = document.querySelector('.text-container');
-            textContainer.style.opacity = index === frameCount ? 1 : 0;
-        };
+            let loaded = false;
 
-        window.addEventListener('scroll', () => {
-            const scrollTop = html.scrollTop;
-            const maxScrollTop = html.scrollHeight - window.innerHeight;
-            const scrollFraction = scrollTop / maxScrollTop;
-            const frameIndex = Math.min(
-                frameCount - 1,
-                Math.ceil(scrollFraction * frameCount)
-            );
+            const preloadImages = () => {
+                for (let i = 1; i <= frameCount; i++) {
+                    const preloadedImg = new Image();
+                    preloadedImg.src = currentFrame(i);
+                    preloadedImg.onload = () => {
+                        if (i === 1 && !loaded) {
+                            img.src = preloadedImg.src;
+                            loaded = true;
+                        }
+                    };
+                }
+            };
 
-            requestAnimationFrame(() => updateImage(frameIndex + 1));
+            const updateImage = index => {
+                img.src = currentFrame(index);
+                textContainer.style.opacity = index === frameCount ? 1 : 0;
+            };
+
+            window.addEventListener('scroll', () => {
+                const scrollTop = document.documentElement.scrollTop;
+                const maxScrollTop = document.documentElement.scrollHeight - window.innerHeight;
+                const scrollFraction = scrollTop / maxScrollTop;
+                const frameIndex = Math.min(
+                    frameCount - 1,
+                    Math.ceil(scrollFraction * frameCount)
+                );
+
+                requestAnimationFrame(() => updateImage(frameIndex + 1));
+            });
+
+            preloadImages();
         });
-
-        preloadImages();
     </script>
 </body>
 </html>
