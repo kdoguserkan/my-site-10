@@ -1,82 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Animated Sequence</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;700&display=swap" rel="stylesheet">
-    <style>
-        html, body {
-            height: 200%;
-            margin: 0;
-            padding: 0;
-            background: #000;
-        }
-
-        #animatedImage {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            object-fit: cover;
-            object-position: center center;
-        }
-
-        .text-container {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
-            font-family: 'Roboto', sans-serif;
-            max-width: 90%;
-            overflow: hidden;
-            color: white;
-        }
-
-        .moon {
-            font-weight: 700;
-            font-size: 7.5vw;
-        }
-
-        .light {
-            font-weight: 100;
-            font-size: 7.5vw;
-        }
-
-        .tiny-homes {
-            font-weight: 300;
-            font-size: 3.75vw;
-            display: inline-block;
-            white-space: nowrap;
-        }
-
-        @media (max-width: 768px) {
-            .moon, .light {
-                font-size: 15vw;
-            }
-
-            .tiny-homes {
-                font-size: 7.5vw;
-            }
-        }
-    </style>
+    <!-- Başlık ve stil tanımlamaları -->
 </head>
 <body>
     <img id="animatedImage" src="" alt="Animated Sequence">
     <div class="text-container">
-        <div>
-            <span class="moon">MOON</span>
-            <span class="light">LIGHT</span>
-        </div>
-        <div class="tiny-homes">TINY HOMES</div>
+        <!-- Metin içeriği -->
     </div>
 
     <script>
         const frameCount = 61;
+
+        // Dinamik yükseklik hesaplama
+        document.documentElement.style.height = `${frameCount * 100}vh`;
+
         const currentFrame = index => (
             `https://raw.githubusercontent.com/kdoguserkan/tinies/main/${(10001 + (index - 1) * 2).toString().padStart(5, '0')}.webp`
         );
@@ -86,6 +24,7 @@
             const textContainer = document.querySelector('.text-container');
             let loaded = false;
 
+            // Ön yükleme fonksiyonu
             const preloadImages = () => {
                 for (let i = 1; i <= frameCount; i++) {
                     const preloadedImg = new Image();
@@ -105,8 +44,8 @@
             };
 
             window.addEventListener('scroll', () => {
-                const scrollTop = document.documentElement.scrollTop;
                 const maxScrollTop = document.documentElement.scrollHeight - window.innerHeight;
+                const scrollTop = Math.min(document.documentElement.scrollTop, maxScrollTop);
                 const scrollFraction = scrollTop / maxScrollTop;
                 const frameIndex = Math.min(
                     frameCount - 1,
