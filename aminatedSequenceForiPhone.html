@@ -10,8 +10,9 @@
             margin: 0;
             padding: 0;
             background: #000;
-            height: 100%; /* Sayfa yüksekliğini normal olarak ayarlıyoruz */
-           
+            height: 100vh; /* Sayfanın yüksekliğini ekran boyutu ile sınırlıyoruz */
+            overflow: hidden; /* Kaydırma çubuğunu gizliyoruz */
+        }
 
         #animatedImage {
             position: fixed;
@@ -107,17 +108,15 @@
                 }
             };
 
+            let lastScrollTop = 0;
             window.addEventListener('scroll', () => {
-                const maxScrollTop = (window.innerHeight * frameCount) - window.innerHeight;
-                const scrollTop = Math.min(window.scrollY, maxScrollTop);
-                const scrollFraction = scrollTop / maxScrollTop;
-                const frameIndex = Math.min(
-                    frameCount - 1,
-                    Math.floor(scrollFraction * frameCount)
-                );
-
-                requestAnimationFrame(() => updateImage(frameIndex + 1));
-            });
+                const scrollTop = window.scrollY;
+                if (scrollTop > lastScrollTop) { // Aşağı doğru kaydırma
+                    const frameIndex = Math.min(frameCount - 1, Math.floor(scrollTop / 10));
+                    requestAnimationFrame(() => updateImage(frameIndex + 1));
+                }
+                lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // Negatif değerleri önlemek için
+            }, false);
 
             preloadImages();
         });
