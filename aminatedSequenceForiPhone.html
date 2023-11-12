@@ -89,7 +89,7 @@
 
 const frameCount = 61;
 const currentFrame = index => (
-    `https://raw.githubusercontent.com/kdoguserkan/tinies/main/${(index * 2 - 1).toString().padStart(5, '0')}.webp`
+    `https://raw.githubusercontent.com/kdoguserkan/tinies/main/${(index + 10000).toString().padStart(5, '0')}.webp`
 );
 
 const preloadImages = () => {
