@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Animated Sequence</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;700&display=swap" rel="stylesheet">
     <style>
-        html,
-        body {
+        html, body {
             height: 200%;
             margin: 0;
             padding: 0;
@@ -36,40 +34,38 @@
             font-family: 'Roboto', sans-serif;
             max-width: 90%;
             overflow: hidden;
-            color: white; /* Yazı renkleri beyaz olarak ayarlandı */
+            color: white;
         }
 
         .moon {
             font-weight: 700;
-            font-size: 7.5vw; /* 3/4 oranında puntosu düşürüldü */
+            font-size: 7.5vw;
         }
 
         .light {
             font-weight: 100;
-            font-size: 7.5vw; /* 3/4 oranında puntosu düşürüldü */
+            font-size: 7.5vw;
         }
 
         .tiny-homes {
             font-weight: 300;
-            font-size: 3.75vw; /* 3/4 oranında puntosu düşürüldü */
+            font-size: 3.75vw;
             display: inline-block;
             white-space: nowrap;
         }
 
         @media (max-width: 768px) {
-            .moon,
-            .light {
-                font-size: 15vw; /* 3/4 oranında puntosu düşürüldü */
+            .moon, .light {
+                font-size: 15vw;
                 display: inline;
             }
 
             .tiny-homes {
-                font-size: 7.5vw; /* 3/4 oranında puntosu düşürüldü */
+                font-size: 7.5vw;
             }
         }
     </style>
 </head>
-
 <body>
     <img id="animatedImage" src="" alt="Animated Sequence">
     <div class="text-container">
@@ -82,28 +78,28 @@
 
     <script>
         const html = document.documentElement;
-        const img = document.getElementById("animatedImage");
-        const textContainer = document.querySelector('.text-container');
-
         const frameCount = 61;
-        const currentFrame = index => (`https://raw.githubusercontent.com/kdoguserkan/tinies/main/${(index + 10000).toString().padStart(5, '0')}.webp`);
+        const currentFrame = index => (
+            `https://raw.githubusercontent.com/kdoguserkan/tinies/main/${(10001 + (index - 1) * 2).toString().padStart(5, '0')}.webp`
+        );
 
         const preloadImages = () => {
             for (let i = 1; i <= frameCount; i++) {
-                const preloadedImg = new Image();
-                preloadedImg.src = currentFrame(i);
+                const img = new Image();
+                img.src = currentFrame(i);
+                img.onload = () => {
+                    if (i === 1) {
+                        document.getElementById("animatedImage").src = img.src;
+                    }
+                };
             }
         };
 
-        img.src = currentFrame(1);
-
         const updateImage = index => {
+            const img = document.getElementById("animatedImage");
             img.src = currentFrame(index);
-            if (index === frameCount) {
-                textContainer.style.opacity = 1;
-            } else {
-                textContainer.style.opacity = 0; /* Scroll up yapınca yazının kaybolmasını sağlamak için */
-            }
+            const textContainer = document.querySelector('.text-container');
+            textContainer.style.opacity = index === frameCount ? 1 : 0;
         };
 
         window.addEventListener('scroll', () => {
@@ -115,13 +111,10 @@
                 Math.ceil(scrollFraction * frameCount)
             );
 
-            requestAnimationFrame(() => {
-                updateImage(frameIndex + 1);
-            });
+            requestAnimationFrame(() => updateImage(frameIndex + 1));
         });
 
         preloadImages();
     </script>
 </body>
-
 </html>
