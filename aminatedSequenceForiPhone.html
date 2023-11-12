@@ -10,7 +10,8 @@
             margin: 0;
             padding: 0;
             background: #000;
-            overflow: hidden; /* Animasyon sırasında kaydırma çubuğunu gizler */
+            height: 100%; /* Sayfa yüksekliğini normal olarak ayarlıyoruz */
+            overflow: hidden; /* Başlangıçta kaydırma çubuğunu gizliyoruz */
         }
 
         #animatedImage {
@@ -103,17 +104,17 @@
                 img.src = currentFrame(index);
                 textContainer.style.opacity = index === frameCount ? 1 : 0;
                 if (index === frameCount) {
-                    document.body.style.overflow = 'auto'; // Animasyon bittiğinde kaydırma çubuğunu geri getir
+                    document.body.style.overflow = 'auto'; // Animasyon bittiğinde kaydırma çubuğunu geri getiriyoruz
                 }
             };
 
             window.addEventListener('scroll', () => {
-                const scrollTop = document.documentElement.scrollTop;
-                const maxScrollTop = document.documentElement.scrollHeight - window.innerHeight;
+                const maxScrollTop = (window.innerHeight * frameCount) - window.innerHeight;
+                const scrollTop = Math.min(window.scrollY, maxScrollTop);
                 const scrollFraction = scrollTop / maxScrollTop;
                 const frameIndex = Math.min(
                     frameCount - 1,
-                    Math.ceil(scrollFraction * frameCount)
+                    Math.floor(scrollFraction * frameCount)
                 );
 
                 requestAnimationFrame(() => updateImage(frameIndex + 1));
