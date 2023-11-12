@@ -87,17 +87,17 @@
         const lightText = document.querySelector('.light');
         const tinyHomesText = document.querySelector('.tiny-homes');
 
-        const frameCount = 61;
-        const currentFrame = index => (
-            `https://raw.githubusercontent.com/kdoguserkan/tinies/main2/${(index * 2 - 1).toString().padStart(4, '0')}.webp`
-        );
+const frameCount = 61;
+const currentFrame = index => (
+    `https://raw.githubusercontent.com/kdoguserkan/tinies/main/${(index * 2 - 1).toString().padStart(5, '0')}.webp`
+);
 
-        const preloadImages = () => {
-            for (let i = 1; i <= frameCount; i++) {
-                const img = new Image();
-                img.src = currentFrame(i);
-            }
-        };
+const preloadImages = () => {
+    for (let i = 1; i <= frameCount; i++) {
+        const img = new Image();
+        img.src = currentFrame(i);
+    }
+};
 
         preloadImages();
 
