@@ -80,48 +80,56 @@
         <div class="tiny-homes">TINY HOMES</div>
     </div>
 
-    <script>
-        const html = document.documentElement;
+<script>
+    const frameCount = 61;
+    const currentFrame = index => (
+        `https://raw.githubusercontent.com/kdoguserkan/tinies/main/${(10001 + (index - 1) * 2).toString().padStart(5, '0')}.webp`
+    );
+
+    window.addEventListener('load', () => {
         const img = document.getElementById("animatedImage");
         const textContainer = document.querySelector('.text-container');
-
-        const frameCount = 61;
-        const currentFrame = index => (`https://raw.githubusercontent.com/kdoguserkan/tinies/main/${(index * 2 - 1).toString().padStart(4, '0')}.webp`);
+        let loaded = false;
 
         const preloadImages = () => {
             for (let i = 1; i <= frameCount; i++) {
                 const preloadedImg = new Image();
                 preloadedImg.src = currentFrame(i);
+                preloadedImg.onload = () => {
+                    if (i === 1 && !loaded) {
+                        img.src = preloadedImg.src; // İlk resmi başarılı bir şekilde yüklediğinde, görüntüleme için ayarla
+                        loaded = true;
+                    }
+                };
             }
         };
 
-        img.src = currentFrame(1);
-
         const updateImage = index => {
-            img.src = currentFrame(index);
+            img.src = currentFrame(index); // Güncel frame'i img src olarak ayarla
+            textContainer.style.opacity = index === frameCount ? 1 : 0; // Son frame'de metin görünür olur
+
             if (index === frameCount) {
-                textContainer.style.opacity = 1;
-            } else {
-                textContainer.style.opacity = 0; /* Scroll up yapınca yazının kaybolmasını sağlamak için */
+                // Animasyon tamamlandığında sayfanın yüksekliğini 'auto' olarak ayarlayarak normal kaydırma davranışını geri yükler
+                document.documentElement.style.height = 'auto';
             }
         };
 
         window.addEventListener('scroll', () => {
-            const scrollTop = html.scrollTop;
-            const maxScrollTop = html.scrollHeight - window.innerHeight;
+            const scrollTop = document.documentElement.scrollTop;
+            const maxScrollTop = document.documentElement.scrollHeight - window.innerHeight;
             const scrollFraction = scrollTop / maxScrollTop;
             const frameIndex = Math.min(
                 frameCount - 1,
                 Math.ceil(scrollFraction * frameCount)
             );
 
-            requestAnimationFrame(() => {
-                updateImage(frameIndex + 1);
-            });
+            requestAnimationFrame(() => updateImage(frameIndex + 1)); // Performans için requestAnimationFrame kullan
         });
 
-        preloadImages();
-    </script>
+        preloadImages(); // Sayfa yüklendiğinde resimleri önyükle
+    });
+</script>
+
 </body>
 
 </html>
